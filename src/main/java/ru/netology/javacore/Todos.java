@@ -4,18 +4,27 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Todos {
-    //...
+    List<String> taskList = new ArrayList<>();
 
     public void addTask(String task) {
-        //...
+        taskList.add(task);
     }
 
     public void removeTask(String task) {
-        //...
+        taskList.remove(task);
+
     }
 
     public String getAllTasks() {
-        //...
+        List<String> sortTaskList = taskList.stream()
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
+        StringBuilder allTasks = new StringBuilder();
+        for (String oneTask : sortTaskList) {
+            allTasks.append(oneTask);
+            allTasks.append(" ");
+        }
+        return String.valueOf(allTasks);
     }
 
 }
