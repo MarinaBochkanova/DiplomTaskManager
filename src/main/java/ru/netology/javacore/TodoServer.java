@@ -8,7 +8,7 @@ import com.google.gson.JsonParser;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.ParseException;
+
 import java.util.Scanner;
 
 public class TodoServer {
@@ -20,31 +20,36 @@ public class TodoServer {
         this.todos = todos;
     }
 
-    public void start() throws IOException, ParseException {
+    public void start() throws IOException {
         System.out.println("Starting server at " + port + "...");
 
-        ServerSocket serverSocket = new ServerSocket(port);
-        while (true) {
-            Socket socket = serverSocket.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter out = new PrintWriter(socket.getOutputStream());
+        try (ServerSocket serverSocket = new ServerSocket(port);) {
+            while (true) {
+                try (Socket socket = serverSocket.accept();
+                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                     PrintWriter out = new PrintWriter(socket.getOutputStream());) {
 
-            JsonParser parser = new JsonParser();
-            Object object = parser.parse(in.readLine());
-            JsonObject jsonObject = (JsonObject) object;
-            JsonElement typeElement = jsonObject.get("type");
-            String type = typeElement.getAsString();
-            JsonElement taskElement = jsonObject.get("task");
-            String task = taskElement.getAsString();
+                    JsonParser parser = new JsonParser();
+                    Object object = parser.parse(in.readLine());
+                    JsonObject jsonObject = (JsonObject) object;
+                    JsonElement typeElement = jsonObject.get("type");
+                    String type = typeElement.getAsString();
+                    JsonElement taskElement = jsonObject.get("task");
+                    String task = taskElement.getAsString();
 
-            if (type.equals("REMOVE")) {
-                todos.removeTask(task);
-            } else if (type.equals("ADD")) {
-                todos.addTask(task);
+                    if (type.equals("REMOVE")) {
+                        todos.removeTask(task);
+                    } else if (type.equals("ADD")) {
+                        todos.addTask(task);
+                    }
+                    String allTaskList = todos.getAllTasks();
+                    System.out.println(allTaskList);
+                }
             }
-            String allTaskList = todos.getAllTasks();
-            System.out.println(allTaskList);
+//        }catch (IOException e){
+//            System.out.println("Не могу стартовать сервер");
+//            e.printStackTrace();
+//        }
         }
-
     }
 }
