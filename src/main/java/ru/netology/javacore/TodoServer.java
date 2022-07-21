@@ -43,13 +43,10 @@ public class TodoServer {
                         todos.addTask(task);
                     }
                     String allTaskList = todos.getAllTasks();
-                    System.out.println(allTaskList);
+                    out.println(allTaskList);
                 }
             }
-//        }catch (IOException e){
-//            System.out.println("Не могу стартовать сервер");
-//            e.printStackTrace();
-//        }
+
         }
     }
 }
